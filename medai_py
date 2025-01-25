@@ -1,0 +1,65 @@
+import os
+from dotenv import load_dotenv
+import json
+import pathlib
+import textwrap
+import google.generativeai as genai
+from IPython.display import display
+from IPython.display import Markdown
+from google.api_core import retry
+def to_markdown(text):
+    text = text.replace('•', '  *')
+    return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+load_dotenv()
+google_api_key = os.getenv('GEMINI_API_KEY')
+genai.configure(api_key=google_api_key)
+system_prompt ={"text":"you are an medical AI assistant,you should predict the reaction between the medicine and effect on body."}
+
+# tool to add medicine names to a list
+medicine_list = []
+def medicine_tool(*medicine):
+    med = medicine.lower().strip()
+    if med not in medicine_list:
+        medicine_list.append(med)
+    return medicine_list
+
+medicine_function={
+    "name": "medicine_tool",
+    "description":"gets the list of medicines.Call this whenever you want to get the list of medicines, for example, when the user asks for a list of medicines, you can call this function to get the list of medicines.",
+    "parameters":{
+        "type":"object",
+        "properties":{
+            "medicine":{
+                "type":"string",
+                "description":"The medicine name",
+            },
+        },
+        "required":["medicine"],
+        "additionalProperties":False
+    }
+}
+
+tool_config = {
+    "function_calling_config": {
+        "mode": "ANY",
+        "allowed_function_names": ["medicine_function"]
+    }
+}
+
+user_prompt=[medicine_list]
+
+def message_gemini(*user_prompt):
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
+    gemini = genai.GenerativeModel(
+    model_name='gemini-1.5-flash',
+    system_instruction=system_prompt,
+    tool_config=tool_config
+)
+    response = gemini.generate_content(user_prompt)
+    return response.text
+
+to_markdown(message_gemini("paracetamol","ibuprofen","aspirin"))
