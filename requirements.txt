@@ -1,4 +1,13 @@
 python==3.11.11
-python-dotenv==1.0.0
 google-generativeai==0.3.2
 ipython==8.12.0
+python-dotenv==1.0.0
+typing-extensions==4.9.0
+requests
+numpy
+pandas
+
+Gemini API key will be used to run the code steps to genrate API key:
+1. Go to google ai studio 
+2. Click on get API key
+3. Copy the API key and paste it in .env file
