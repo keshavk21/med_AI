@@ -2,8 +2,7 @@ import os
 import concurrent.futures
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-load_dotenv()
-
+from waitress import serve
 # Import all existing Gemini functions
 from menu.drug.classifier import message_gemini as drug_classifier
 from menu.drug.describer import message_gemini as drug_describer
@@ -12,7 +11,7 @@ from menu.food.describer import message_gemini as food_describer
 from menu.duplication.classifier import message_gemini as duplication_classifier
 from menu.duplication.describer import message_gemini as duplication_describer
 
-
+load_dotenv()
 app = Flask(__name__)
 
 def safe_process_input(raw_text, input_type):
