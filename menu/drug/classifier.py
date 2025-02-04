@@ -19,8 +19,7 @@ system_prompt_ddc ={"text":"""You are a medical AI Agent.Classify drug drug inte
 # Function to call Gemini API
 def message_gemini(user_prompt):
     try:
-        gemini = genai.GenerativeModel("gemini-1.5-flash",
-        system_instruction=system_prompt_ddc)
+        gemini = genai.GenerativeModel("gemini-1.5-flash",system_instruction=system_prompt_ddc)
         response = gemini.generate_content(user_prompt)
         return response.text.strip()
     except Exception as e:
