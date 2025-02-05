@@ -14,18 +14,25 @@ from menu.duplication.describer import message_gemini as duplication_describer
 load_dotenv()
 app = Flask(__name__)
 
-def safe_process_input(raw_text, input_type):
+def parse_input(data):
     """
-    Validate and process input data with type-specific error handling
+    Parse input in the format "selected_meds=med1,med2,med3"
     """
-    if not raw_text:
-        return None, f"No {input_type} list provided"
-
-    items = [item.strip() for item in raw_text.split(",") if item.strip()]
-    if not items:
-        return None, f"Invalid or empty {input_type} list"
-
-    return items, None
+    if not data or "selected_meds=" not in data:
+        return None, "Invalid input format. Expected 'selected_meds=med1,med2,med3'"
+    
+    try:
+        # Split on 'selected_meds=' and take the second part
+        meds_str = data.split("selected_meds=")[1].strip()
+        items = [item.strip() for item in meds_str.split(",") if item.strip()]
+        
+        if not items:
+            return None, "No medications provided"
+            
+        return items, None
+        
+    except Exception as e:
+        return None, f"Error parsing input: {str(e)}"
 
 def run_endpoint_function(func, items, endpoint_name):
     """
@@ -46,11 +53,8 @@ def parallel_aggregate_endpoints():
         # Get raw input data
         raw_text = request.data.decode("utf-8").strip()
         
-        # Determine input type based on context or header if needed
-        input_type = request.headers.get('X-Input-Type', 'drug')
-        
-        # Validate input
-        items, error = safe_process_input(raw_text, input_type)
+        # Parse input
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
@@ -66,16 +70,13 @@ def parallel_aggregate_endpoints():
         
         # Parallel processing using ThreadPoolExecutor
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Submit all tasks to the thread pool
             futures = [
                 executor.submit(run_endpoint_function, func, items, name)
                 for func, items, name in endpoint_tasks
             ]
             
-            # Wait for all futures to complete
             concurrent.futures.wait(futures)
             
-            # Collect and aggregate results
             results = {}
             for future in futures:
                 results.update(future.result())
@@ -85,16 +86,15 @@ def parallel_aggregate_endpoints():
     except Exception as e:
         return jsonify({"aggregate_error": f"Internal Server Error: {str(e)}"}), 500
 
-# Preserve all existing routes with parallel processing option
 @app.route("/drug_drug_classify", methods=["POST"])
 def classify_drugs():
     try:
         raw_text = request.data.decode("utf-8").strip()
-        drugs, error = safe_process_input(raw_text, 'drug')
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
-        result = drug_classifier(drugs)
+        result = drug_classifier(items)
         return jsonify({"drug-drug classification": result})
 
     except Exception as e:
@@ -104,11 +104,11 @@ def classify_drugs():
 def describe_drugs():
     try:
         raw_text = request.data.decode("utf-8").strip()
-        drugs, error = safe_process_input(raw_text, 'drug')
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
-        result = drug_describer(drugs)
+        result = drug_describer(items)
         return jsonify({"drug-drug describer": result})
 
     except Exception as e:
@@ -118,11 +118,11 @@ def describe_drugs():
 def classify_food():
     try:
         raw_text = request.data.decode("utf-8").strip()
-        foods, error = safe_process_input(raw_text, 'food')
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
-        result = food_classifier(foods)
+        result = food_classifier(items)
         return jsonify({"drug-food classification": result})
 
     except Exception as e:
@@ -132,11 +132,11 @@ def classify_food():
 def describe_food():
     try:
         raw_text = request.data.decode("utf-8").strip()
-        foods, error = safe_process_input(raw_text, 'food')
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
-        result = food_describer(foods)
+        result = food_describer(items)
         return jsonify({"drug-food describer": result})
 
     except Exception as e:
@@ -146,11 +146,11 @@ def describe_food():
 def classify_duplication():
     try:
         raw_text = request.data.decode("utf-8").strip()
-        drugs, error = safe_process_input(raw_text, 'drug')
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
-        result = duplication_classifier(drugs)
+        result = duplication_classifier(items)
         return jsonify({"drug-duplication classification": result})
 
     except Exception as e:
@@ -160,11 +160,11 @@ def classify_duplication():
 def describe_duplication():
     try:
         raw_text = request.data.decode("utf-8").strip()
-        drugs, error = safe_process_input(raw_text, 'drug')
+        items, error = parse_input(raw_text)
         if error:
             return jsonify({"error": error}), 400
 
-        result = duplication_describer(drugs)
+        result = duplication_describer(items)
         return jsonify({"therapeutic-duplication describer": result})
 
     except Exception as e:
