@@ -1,1 +1,1 @@
-waitress-serve --port=8080 --threads=4 your_app_module:app
+waitress-serve --port=8080 --threads=4 app:app

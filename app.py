@@ -4,12 +4,12 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from waitress import serve
 # Import all existing Gemini functions
-from menu.drug.classifier import message_gemini as drug_classifier
-from menu.drug.describer import message_gemini as drug_describer
-from menu.food.classifier import message_gemini as food_classifier
-from menu.food.describer import message_gemini as food_describer
-from menu.duplication.classifier import message_gemini as duplication_classifier
-from menu.duplication.describer import message_gemini as duplication_describer
+from menu.drug.classifier import stream_output as drug_classifier
+from menu.drug.describer import stream_output as drug_describer
+from menu.food.classifier import stream_output as food_classifier
+from menu.food.describer import stream_output as food_describer
+from menu.duplication.classifier import stream_output as duplication_classifier
+from menu.duplication.describer import stream_output as duplication_describer
 
 load_dotenv()
 app = Flask(__name__)
@@ -24,12 +24,10 @@ def parse_input(data):
     try:
         # Split on 'selected_meds=' and take the second part
         meds_str = data.split("selected_meds=")[1].strip()
-        items = [item.strip() for item in meds_str.split(",") if item.strip()]
+        # Create a single string with medications separated by commas
+        formatted_input = f"{meds_str}"
         
-        if not items:
-            return None, "No medications provided"
-            
-        return items, None
+        return formatted_input, None
         
     except Exception as e:
         return None, f"Error parsing input: {str(e)}"
@@ -39,7 +37,11 @@ def run_endpoint_function(func, items, endpoint_name):
     Safely execute endpoint functions with error handling
     """
     try:
+        # Pass the formatted string directly to the function
         result = func(items)
+        # Ensure result is JSON serializable
+        if isinstance(result, set):
+            result = list(result)
         return {endpoint_name: result}
     except Exception as e:
         return {f"{endpoint_name}_error": str(e)}

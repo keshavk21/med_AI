@@ -1,23 +1,40 @@
+from groq import Groq
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
 
-# Load environment variables
 load_dotenv()
-google_api_key = os.getenv("GEMINI_API_KEY")
 
-# Configure Gemini API
-genai.configure(api_key=google_api_key)
+client = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
+)
 
 # Define system prompt
-system_prompt_dfd ={"text":"""You are a medical AI Agent. Tell is there any food or herb which can react with the drugs in the list in 100 words"""}
+system_prompt_dfd ="""You are a medical AI Agent. Tell is there any food or herb which can react with the drugs in the list in 100 words"""
 
 # Function to call Gemini API
-def message_gemini(user_prompt):
+def stream_output(user_prompt):
     try:
-        gemini = genai.GenerativeModel("gemini-1.5-flash",system_instruction=system_prompt_dfd)
-        response = gemini.generate_content(user_prompt)
-        return response.text.strip()
+        chat_completion = client.chat.completions.create(
+
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt_dfd
+            },
+            {
+                "role": "user",
+                "content": user_prompt,
+            }
+        ],
+
+        model="llama-3.3-70b-versatile",
+        temperature=1,
+        top_p=0.2,
+        stop=None,
+        stream=False,
+        )
+        return chat_completion.choices[0].message.content
     except Exception as e:
-        print(f"Error with Gemini API: {e}")
-        return "Error"
+        print(f"Error with AI API: {e}")
+        return "error"
+    
