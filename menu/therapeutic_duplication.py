@@ -8,10 +8,20 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-# Define system prompt
-system_prompt_ddd ="""you are an medical AI agent.Respond the reaction between the drugs to human when taken together in 100 words"""
+system_prompt = """You are a medical AI agent. Classify theraputic duplication as Major, Moderate, or Minor.
+    Where:
+        1. Major: High clinical risk. Avoid combination; risks outweigh benefits.
+        2. Moderate: Moderate risk. Avoid unless necessary; use with caution.
+        3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
 
-# Function to call Gemini API
+Describe the reaction between to the above drugs to human, in 100 words.
+Format :
+{
+	‘drug_classification’: ‘(Major, Moderate, or Minor)’,
+	‘drug_description’ : ‘description’
+}
+"""
+
 def stream_output(user_prompt):
     try:
         chat_completion = client.chat.completions.create(
@@ -19,7 +29,7 @@ def stream_output(user_prompt):
         messages=[
             {
                 "role": "system",
-                "content": system_prompt_ddd
+                "content": system_prompt
             },
             {
                 "role": "user",

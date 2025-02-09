@@ -8,13 +8,20 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-# Define system prompt
-system_prompt_dfc ="""You are a medical AI Agent. Classify on the bases:
-                1.Major:Highly clinically significant. Avoid combinations; the risk of the interaction outweighs the benefit.
-                2.Moderate:Moderately clinically significant. Usually avoid combinations; use it only under special circumstances.
-                3.Minor:Minimally clinically significant. Minimize risk; assess risk and consider an alternative drug, take steps to circumvent the interaction risk and/or institute a monitoring plan in 1 word"""
+system_prompt = """You are a medical AI agent. Classify drug,food interactions as Major, Moderate, or Minor.
+    Where:
+        1. Major: High clinical risk. Avoid combination; risks outweigh benefits.
+        2. Moderate: Moderate risk. Avoid unless necessary; use with caution.
+        3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
 
-# Function to call Gemini API
+Describe the reaction between to the above drugs to human, in 100 words.
+Format :
+{
+	‘drug_classification’: ‘(Major, Moderate, or Minor)’,
+	‘drug_description’ : ‘description’
+}
+"""
+
 def stream_output(user_prompt):
     try:
         chat_completion = client.chat.completions.create(
@@ -22,7 +29,7 @@ def stream_output(user_prompt):
         messages=[
             {
                 "role": "system",
-                "content": system_prompt_dfc
+                "content": system_prompt
             },
             {
                 "role": "user",
@@ -40,3 +47,4 @@ def stream_output(user_prompt):
     except Exception as e:
         print(f"Error with AI API: {e}")
         return "error"
+    

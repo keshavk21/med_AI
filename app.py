@@ -1,180 +1,66 @@
-import os
+from fastapi import FastAPI, HTTPException, Form
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import concurrent.futures
-from flask import Flask, request, jsonify
+import json
+import os
 from dotenv import load_dotenv
-from waitress import serve
-# Import all existing Gemini functions
-from menu.drug.classifier import stream_output as drug_classifier
-from menu.drug.describer import stream_output as drug_describer
-from menu.food.classifier import stream_output as food_classifier
-from menu.food.describer import stream_output as food_describer
-from menu.duplication.classifier import stream_output as duplication_classifier
-from menu.duplication.describer import stream_output as duplication_describer
+from menu.drug_drug import stream_output as drug_drug_check
+from menu.drug_food import stream_output as drug_food_check
+from menu.therapeutic_duplication import stream_output as therapeutic_check
 
+# Load environment variables
 load_dotenv()
-app = Flask(__name__)
 
-def parse_input(data):
-    """
-    Parse input in the format "selected_meds=med1,med2,med3"
-    """
-    if not data or "selected_meds=" not in data:
-        return None, "Invalid input format. Expected 'selected_meds=med1,med2,med3'"
+app = FastAPI()
+
+# Define the input model
+class InputData(BaseModel):
+    selected_meds: str
+
+def parse_response(response: str) -> dict:
+    """Parse the string response into a JSON dictionary."""
+    response = response.replace('‘', '"').replace('’', '"')
+    try:
+        return json.loads(response)
+    except json.JSONDecodeError:
+        return {"error": "Failed to parse response"}
+
+@app.post("/aggregate_interactions")
+async def aggregate_interactions(selected_meds: str = Form(...)):
+    """Endpoint to aggregate drug interactions, food interactions, and therapeutic duplications."""
+    user_prompt = selected_meds.strip()
     
-    try:
-        # Split on 'selected_meds=' and take the second part
-        meds_str = data.split("selected_meds=")[1].strip()
-        # Create a single string with medications separated by commas
-        formatted_input = f"{meds_str}"
-        
-        return formatted_input, None
-        
-    except Exception as e:
-        return None, f"Error parsing input: {str(e)}"
-
-def run_endpoint_function(func, items, endpoint_name):
-    """
-    Safely execute endpoint functions with error handling
-    """
-    try:
-        # Pass the formatted string directly to the function
-        result = func(items)
-        # Ensure result is JSON serializable
-        if isinstance(result, set):
-            result = list(result)
-        return {endpoint_name: result}
-    except Exception as e:
-        return {f"{endpoint_name}_error": str(e)}
-
-@app.route("/parallel_aggregate", methods=["POST"])
-def parallel_aggregate_endpoints():
-    """
-    Parallel processing of all endpoint functions
-    """
-    try:
-        # Get raw input data
-        raw_text = request.data.decode("utf-8").strip()
-        
-        # Parse input
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        # Define endpoint tasks with their corresponding functions and names
-        endpoint_tasks = [
-            (drug_classifier, items, "drug-drug classification"),
-            (drug_describer, items, "drug-drug describer"),
-            (food_classifier, items, "drug-food classification"),
-            (food_describer, items, "drug-food describer"),
-            (duplication_classifier, items, "drug-duplication classification"),
-            (duplication_describer, items, "therapeutic-duplication describer")
-        ]
-        
-        # Parallel processing using ThreadPoolExecutor
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(run_endpoint_function, func, items, name)
-                for func, items, name in endpoint_tasks
-            ]
-            
-            concurrent.futures.wait(futures)
-            
-            results = {}
-            for future in futures:
-                results.update(future.result())
-        
-        return jsonify(results)
+    # Prepare tasks for concurrent execution
+    tasks = [
+        (drug_drug_check, user_prompt, "drug_drug_check"),
+        (drug_food_check, user_prompt, "drug_food_check"),
+        (therapeutic_check, user_prompt, "therapeutic_check"),
+    ]
     
-    except Exception as e:
-        return jsonify({"aggregate_error": f"Internal Server Error: {str(e)}"}), 500
+    results = {}
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = {
+            executor.submit(func, user_prompt): name
+            for func, user_prompt, name in tasks
+        }
+        
+        for future in concurrent.futures.as_completed(futures):
+            name = futures[future]
+            try:
+                result = future.result()
+                results[name] = parse_response(result)
+            except Exception as e:
+                results[name] = {"error": f"Error: {str(e)}"}
+    
+    return JSONResponse(content=results)
 
-@app.route("/drug_drug_classify", methods=["POST"])
-def classify_drugs():
-    try:
-        raw_text = request.data.decode("utf-8").strip()
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        result = drug_classifier(items)
-        return jsonify({"drug-drug classification": result})
-
-    except Exception as e:
-        return jsonify({"error": f"Internal Server Error: {e}"}), 500
-
-@app.route("/drug_drug_describer", methods=["POST"])
-def describe_drugs():
-    try:
-        raw_text = request.data.decode("utf-8").strip()
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        result = drug_describer(items)
-        return jsonify({"drug-drug describer": result})
-
-    except Exception as e:
-        return jsonify({"error": f"Internal Server Error: {e}"}), 500
-
-@app.route("/drug_food_classify", methods=["POST"])
-def classify_food():
-    try:
-        raw_text = request.data.decode("utf-8").strip()
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        result = food_classifier(items)
-        return jsonify({"drug-food classification": result})
-
-    except Exception as e:
-        return jsonify({"error": f"Internal Server Error: {e}"}), 500
-
-@app.route("/drug_food_describer", methods=["POST"])
-def describe_food():
-    try:
-        raw_text = request.data.decode("utf-8").strip()
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        result = food_describer(items)
-        return jsonify({"drug-food describer": result})
-
-    except Exception as e:
-        return jsonify({"error": f"Internal Server Error: {e}"}), 500
-
-@app.route("/drug_duplication_classify", methods=["POST"])
-def classify_duplication():
-    try:
-        raw_text = request.data.decode("utf-8").strip()
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        result = duplication_classifier(items)
-        return jsonify({"drug-duplication classification": result})
-
-    except Exception as e:
-        return jsonify({"error": f"Internal Server Error: {e}"}), 500
-
-@app.route("/drug_duplication_describer", methods=["POST"])
-def describe_duplication():
-    try:
-        raw_text = request.data.decode("utf-8").strip()
-        items, error = parse_input(raw_text)
-        if error:
-            return jsonify({"error": error}), 400
-
-        result = duplication_describer(items)
-        return jsonify({"therapeutic-duplication describer": result})
-
-    except Exception as e:
-        return jsonify({"error": f"Internal Server Error: {e}"}), 500
-
-@app.route("/health", methods=["GET"])
-def health_check():
-    return jsonify({"status": "API is running"}), 200
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return JSONResponse(content={"status": "API is running"})
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=os.getenv("PORT"))
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT", 8000)))

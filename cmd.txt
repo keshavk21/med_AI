@@ -1,1 +1,0 @@
-waitress-serve --port=8080 --threads=4 app:app
