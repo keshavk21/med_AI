@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import concurrent.futures
 import json
 import os
+import uvicorn
 from dotenv import load_dotenv
 from menu.drug_drug import stream_output as drug_drug_check
 from menu.drug_food import stream_output as drug_food_check
@@ -62,5 +63,4 @@ async def health_check():
     return JSONResponse(content={"status": "API is running"})
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT", 8000)))

@@ -8,13 +8,13 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent. Classify theraputic duplication as Major, Moderate, or Minor.
+system_prompt = """You are a medical AI agent. Classify ```theraputic duplication``` as Major, Moderate, or Minor.
     Where:
         1. Major: High clinical risk. Avoid combination; risks outweigh benefits.
         2. Moderate: Moderate risk. Avoid unless necessary; use with caution.
         3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
 
-Describe the reaction between to the above drugs to human, in 100 words.
+Describe the theraputic duplication of drugs, in 100 words.
 Format :
 {
 	‘drug_classification’: ‘(Major, Moderate, or Minor)’,
