@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from menu.drug_drug import stream_output as drug_drug_check
 from menu.drug_food import stream_output as drug_food_check
 from menu.therapeutic_duplication import stream_output as therapeutic_check
+from menu.drug_detail import stream_output as drug_detail_check
 
 # Load environment variables
 load_dotenv()
@@ -56,6 +57,14 @@ async def aggregate_interactions(selected_meds: str = Form(...)):
                 results[name] = {"error": f"Error: {str(e)}"}
     
     return JSONResponse(content=results)
+
+@app.post("/drug_details")
+async def drug_details(selected_meds: str = Form(...)):
+    """Endpoint to get drug details."""
+    user_prompt = selected_meds.strip()
+    response = drug_detail_check(user_prompt)
+    # Return the raw response string without attempting to parse it as JSON
+    return JSONResponse(content={"drug_details": response})
 
 @app.get("/health")
 async def health_check():
