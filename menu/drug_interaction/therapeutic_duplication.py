@@ -20,6 +20,7 @@ Format :
 	‘drug_classification’: ‘(Major, Moderate, or Minor)’,
 	‘drug_description’ : ‘description’
 }
+Name the medications that are duplicated and the risk associated with it.
 """
 
 def stream_output(user_prompt):

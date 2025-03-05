@@ -8,17 +8,20 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent. Classify drug interactions as Major, Moderate, or Minor.
-    Where:
-        1. Major: High clinical risk. Avoid combination; risks outweigh benefits.
-        2. Moderate: Moderate risk. Avoid unless necessary; use with caution.
-        3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
-
-Describe the reaction between to the above drugs to human, in 100 words.
-Format :
+system_prompt = """You are a medical AI agent. Give details about drug. Format:
 {
-	"drug_classification": "(Major, Moderate, or Minor)",
-	"drug_description" : "description"
+    "drug_title": "drug Title",
+    "drug_description": "description of drug",
+    "drug_use": "Use Title",
+    "drug_use_description": "description of use",
+    "drug_side_effects": "Side Effects Title",
+    "drug_side_effects_description": "description of side effects for adults,children,elderly, and pregnant",
+    "drug_warnings": "Warnings Title",
+    "drug_warnings_description": "description of warnings",
+    "drug_interactions": "Interactions Title",
+    "drug_interactions_description": "description of interactions",
+    "drug_overdose": "Overdose Title",
+    "drug_overdose_description": "description of overdose"
 }
 """
 
