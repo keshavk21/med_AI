@@ -21,11 +21,22 @@ class InputData(BaseModel):
 
 def parse_response(response: str) -> dict:
     """Parse the string response into a JSON dictionary."""
-    response = response.replace('‘', '"').replace('’', '"')
+    # Replace single quotes with double quotes
+    response = response.replace(''', '"').replace(''', '"')
+    
     try:
+        # Try direct parsing first
         return json.loads(response)
     except json.JSONDecodeError:
-        return {"error": "Failed to parse response"}
+        try:
+            # If that fails, try to clean up the string
+            # This helps with newlines and extra whitespace
+            cleaned_response = response.strip()
+            return json.loads(cleaned_response)
+        except json.JSONDecodeError:
+            # If all else fails, you might need a more robust approach
+            # Consider using regex or other string manipulation
+            return {"error": "Failed to parse response", "raw": response[:100] + "..."}
 
 @app.post("/aggregate_interactions")
 async def aggregate_interactions(selected_meds: str = Form(...)):
