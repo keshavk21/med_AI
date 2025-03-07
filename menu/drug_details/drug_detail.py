@@ -23,7 +23,6 @@ system_prompt = """You are a medical AI agent. Give details about drug. Format:
     "drug_overdose": "Overdose Title",
     "drug_overdose_description": "description of overdose"
 }
-Strictly follow the format.
 """
 
 def stream_output(user_prompt):

@@ -59,8 +59,8 @@ def stream_output(user_prompt):
         ],
 
         model="llama-3.3-70b-versatile",
-        temperature=1,
-        top_p=0.2,
+        temperature=0.5,
+        top_p=1,
         stop=None,
         stream=False,
         )

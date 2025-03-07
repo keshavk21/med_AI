@@ -13,30 +13,12 @@ from menu.drug_details.drug_detail import stream_output as drug_detail_check
 
 # Load environment variables
 load_dotenv()
+
 app = FastAPI()
 
 # Define the input model
 class InputData(BaseModel):
     selected_meds: str
-
-def parse_response(response: str) -> dict:
-    """Parse the string response into a JSON dictionary."""
-    # Replace single quotes with double quotes
-    response = response.replace(''', '"').replace(''', '"')
-    
-    try:
-        # Try direct parsing first
-        return json.loads(response)
-    except json.JSONDecodeError:
-        try:
-            # If that fails, try to clean up the string
-            # This helps with newlines and extra whitespace
-            cleaned_response = response.strip()
-            return json.loads(cleaned_response)
-        except json.JSONDecodeError:
-            # If all else fails, you might need a more robust approach
-            # Consider using regex or other string manipulation
-            return {"error": "Failed to parse response", "raw": response[:100] + "..."}
 
 @app.post("/aggregate_interactions")
 async def aggregate_interactions(selected_meds: str = Form(...)):
@@ -62,7 +44,7 @@ async def aggregate_interactions(selected_meds: str = Form(...)):
             name = futures[future]
             try:
                 result = future.result()
-                results[name] = parse_response(result)
+                results[name] = result
             except Exception as e:
                 results[name] = {"error": f"Error: {str(e)}"}
     
@@ -70,58 +52,11 @@ async def aggregate_interactions(selected_meds: str = Form(...)):
 
 @app.post("/drug_details")
 async def drug_details(selected_meds: str = Form(...)):
-    try:
-        # Validate and clean input
-        user_prompt = selected_meds.strip()
-        
-        if not user_prompt:
-            return JSONResponse(
-                content={"error": "No medication specified"},
-                status_code=400
-            )
-        
-        # Get response from AI
-        response = drug_detail_check(user_prompt)
-        
-        # If the AI returns "error"
-        if response == "error":
-            return JSONResponse(
-                content={"error": "AI service encountered an error"},
-                status_code=500
-            )
-        
-        # Parse the response
-        try:
-            # Directly return the parsed response as a dictionary
-            parsed_response = json.loads(response)
-            return JSONResponse(content=parsed_response)
-        
-        except json.JSONDecodeError:
-            return JSONResponse(
-                content={
-                    "error": "Failed to parse AI response",
-                    "raw_response": response
-                },
-                status_code=500
-            )
-    
-    except Exception as e:
-        return JSONResponse(
-            content={
-                "error": f"Unexpected error: {str(e)}"
-            },
-            status_code=500
-        )
-    
-    except Exception as e:
-        return JSONResponse(
-            content={
-                "drug_detail": {
-                    "error": f"Unexpected error: {str(e)}"
-                }
-            },
-            status_code=500
-        )
+    """Endpoint to get drug details."""
+    user_prompt = selected_meds.strip()
+    response = drug_detail_check(user_prompt)
+    # Return the raw response string without attempting to parse it as JSON
+    return JSONResponse(content={"drug_details": response})
 
 @app.get("/health")
 async def health_check():
@@ -129,4 +64,5 @@ async def health_check():
     return JSONResponse(content={"status": "API is running"})
 
 if __name__ == "__main__":
+    uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT", 8000)))
     uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT", 8000)))
