@@ -15,12 +15,15 @@ system_prompt = """You are a medical AI agent. Classify ```theraputic duplicatio
         3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
 
 Describe the theraputic duplication of drugs, in 100 words.
-Format :
+json Format :
 {
-	‘drug_classification’: ‘(Major, Moderate, or Minor)’,
-	‘drug_description’ : ‘description’
-}
-Name the medication pairs that are duplicated and the risk associated with it.
+    "similar1":{
+        "drug_drug_title": "drug name - drug name",
+        "drug_classification": "(Major, Moderate, or Minor)",
+        "drug_description": "Brief explanation of theraputic duplication."
+    }
+follow the json format strictly
+Name the medication pairs that are duplicated in therapy.
 """
 
 def stream_output(user_prompt):

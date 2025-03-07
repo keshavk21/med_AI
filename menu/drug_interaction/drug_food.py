@@ -17,15 +17,19 @@ system_prompt = """You are a medical AI agent. Classify ```drug reaction with fo
 Describe the reaction between drug and diffrent food/drinks/herbs to human, in 100 words.
 Format :
 {
-    "drug_drug": "drug1 name - food",
-    "drug_classification": "(Major, Moderate, or Minor)",
-    "drug_description": "Brief explanation of interaction risk and its clinical impact."
-    
-    "drug_drug": "drug2 name - food",
-    "drug_classification": "(Major, Moderate, or Minor)",
-    "drug_description": "Brief explanation of interaction risk and its clinical impact."
+    "interaction1":{
+        "drug1_drug2 Title": "drug1 name - drug3 name",
+        "drug_classification": "(Major, Moderate, or Minor)",
+        "drug_description": "Brief explanation of interaction risk and its clinical impact."
+    },
+    "interaction2":{
+        "drug1_drug3 Title": "drug1 name - drug3 name",
+        "drug_classification": "(Major, Moderate, or Minor)",
+        "drug_description": "Brief explanation of interaction risk and its clinical impact."
+    }
 }
-follow the format strictly.
+
+follow the json format strictly.
 """
 
 def stream_output(user_prompt):

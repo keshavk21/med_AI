@@ -24,39 +24,51 @@ class InputData(BaseModel):
 async def aggregate_interactions(selected_meds: str = Form(...)):
     """Endpoint to aggregate drug interactions, food interactions, and therapeutic duplications."""
     user_prompt = selected_meds.strip()
-    
+
     # Prepare tasks for concurrent execution
     tasks = [
         (drug_drug_check, user_prompt, "drug_drug_check"),
         (drug_food_check, user_prompt, "drug_food_check"),
         (therapeutic_check, user_prompt, "therapeutic_check"),
     ]
-    
+
     results = {}
-    
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = {
             executor.submit(func, user_prompt): name
             for func, user_prompt, name in tasks
         }
-        
+
         for future in concurrent.futures.as_completed(futures):
             name = futures[future]
             try:
-                result = future.result()
-                results[name] = result
+                result = future.result()  # Get the JSON string from the model
+                results[name] = json.loads(result)  # Convert JSON string to dict
+            except json.JSONDecodeError:
+                results[name] = {"error": "Invalid JSON response"}
             except Exception as e:
                 results[name] = {"error": f"Error: {str(e)}"}
-    
-    return JSONResponse(content=results)
+
+    return JSONResponse(content={"drug_interaction": results})
 
 @app.post("/drug_details")
 async def drug_details(selected_meds: str = Form(...)):
     """Endpoint to get drug details."""
     user_prompt = selected_meds.strip()
     response = drug_detail_check(user_prompt)
+    respose_dict = json.loads(response)
     # Return the raw response string without attempting to parse it as JSON
-    return JSONResponse(content={"drug_details": response})
+    return JSONResponse(content={"drug_details": respose_dict})
+
+@app.post("/drug_drug")
+async def drug_details(selected_meds: str = Form(...)):
+    """Endpoint to get drug details."""
+    user_prompt = selected_meds.strip()
+    response = drug_drug_check(user_prompt)
+    respose_dict = json.loads(response)
+    # Return the raw response string without attempting to parse it as JSON
+    return JSONResponse(content={"drug_details": respose_dict})
 
 @app.get("/health")
 async def health_check():
@@ -64,5 +76,4 @@ async def health_check():
     return JSONResponse(content={"status": "API is running"})
 
 if __name__ == "__main__":
-    uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT", 8000)))
     uvicorn.run(app, host='0.0.0.0', port=int(os.getenv("PORT", 8000)))
