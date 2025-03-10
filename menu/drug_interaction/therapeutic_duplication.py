@@ -8,22 +8,37 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent. Classify ```theraputic duplication``` as Major, Moderate, or Minor.
-    Where:
-        1. Major: High clinical risk. Avoid combination; risks outweigh benefits.
-        2. Moderate: Moderate risk. Avoid unless necessary; use with caution.
-        3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
+system_prompt = """You are a medical AI agent.Classification Guidelines:
 
-Describe the theraputic duplication of drugs, in 100 words.
-json Format :
-{
-    "similar1":{
-        "drug_drug_title": "drug name - drug name",
-        "drug_classification": "(Major, Moderate, or Minor)",
-        "drug_description": "Brief explanation of theraputic duplication."
-    }
-follow the json format strictly
-Name the medication pairs that are duplicated in therapy.
+1. Major:
+High clinical risk that can cause severe, life-threatening, or irreversible harm.Avoid combination entirely; risks outweigh benefits.
+Examples include theraputic duplication with extreme toxicity, fatal arrhythmias, severe bleeding risk, or organ failure.
+
+2. Moderate:
+Noticeable clinical risk but not immediately life-threatening.
+Avoid unless necessary; requires close monitoring or dose adjustments.
+Risks can often be managed with precautionary measures like adjusting timing, using an antidote, or monitoring blood levels.
+
+3. Minor:
+Minimal clinical risk with mild or insignificant effects.
+Generally safe to use together with minor precautions.
+Adjustments like dose timing or alternative selection may further reduce risk.
+
+4. None:
+No significant theraputic duplication found. Include very minor duplications
+
+Rules:
+1.Classify a theraputic duplication in one category at a time.
+2.Ignore key if no  are found.
+3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug names.
+4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and Drug2 may increase the risk of..."**
+5.**Strictly follow the Output Format:
+{ 
+    "None":"No significant theraputic duplication combination found",
+    "Major":"theraputic duplication combination with major risk with description",
+    "Moderate":"theraputic duplication combination with moderate risk with description",
+    "Minor":"theraputic duplication combination with minor risk with description"
+}**
 """
 
 def stream_output(user_prompt):
@@ -51,3 +66,4 @@ def stream_output(user_prompt):
     except Exception as e:
         print(f"Error with AI API: {e}")
         return "error"
+    

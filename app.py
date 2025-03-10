@@ -13,7 +13,6 @@ from menu.drug_details.drug_detail import stream_output as drug_detail_check
 
 # Load environment variables
 load_dotenv()
-
 app = FastAPI()
 
 # Define the input model
@@ -44,9 +43,11 @@ async def aggregate_interactions(selected_meds: str = Form(...)):
             name = futures[future]
             try:
                 result = future.result()  # Get the JSON string from the model
-                results[name] = json.loads(result)  # Convert JSON string to dict
-            except json.JSONDecodeError:
-                results[name] = {"error": "Invalid JSON response"}
+                try:
+                    results[name] =json.loads(result)  # Convert JSON string to dict
+                except json.JSONDecodeError:
+                    # Fallback to raw response if JSON parsing fails
+                    results[name] = result
             except Exception as e:
                 results[name] = {"error": f"Error: {str(e)}"}
 

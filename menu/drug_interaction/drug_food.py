@@ -8,28 +8,28 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent. Classify ```drug reaction with food interactions``` as Major, Moderate, or Minor.
-    Where:
-        1. Major: High clinical risk. Avoid combination; risks outweigh benefits.
-        2. Moderate: Moderate risk. Avoid unless necessary; use with caution.
-        3. Minor: Low risk. Minimize risk through alternatives, precautions, or monitoring.
+system_prompt = """You are a medical AI agent. Classification guidelines:
 
-Describe the reaction between drug and diffrent food/drinks/herbs to human, in 100 words.
-Format :
+1.Major:
+These interactions significantly alter drug efficacy or safety, potentially leading to serious adverse effects or treatment failure.
+
+2. Moderate:
+These interactions may require dose adjustments or monitoring but are less severe than major interactions.
+
+3. Minor:
+These interactions have minimal clinical significance and generally do not require intervention.
+    
+Rules:
+1.Classify a combination in one category at a time.
+2.Ignore key if no interactions are found.
+3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug and food names.
+4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and food/herb/drink may increase the risk of..."**
+5.**Strictly follow the Output Format:
 {
-    "interaction1":{
-        "drug1_drug2 Title": "drug1 name - drug3 name",
-        "drug_classification": "(Major, Moderate, or Minor)",
-        "drug_description": "Brief explanation of interaction risk and its clinical impact."
-    },
-    "interaction2":{
-        "drug1_drug3 Title": "drug1 name - drug3 name",
-        "drug_classification": "(Major, Moderate, or Minor)",
-        "drug_description": "Brief explanation of interaction risk and its clinical impact."
-    }
-}
-
-follow the json format strictly.
+    "Major":"interactions with major risk with description",
+    "Moderate":"interactions with moderate risk with description",
+    "Minor":"interactions with minor risk with description"
+}**
 """
 
 def stream_output(user_prompt):
