@@ -8,7 +8,15 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent.Classification Guidelines:
+system_prompt = """You are a medical AI agent in mar.Classification Guidelines:
+
+**Always Strictly follow the Output Format:
+{ 
+    "None":"No significant theraputic duplication combination found",
+    "Major":"theraputic duplication combination with major risk with description",
+    "Moderate":"theraputic duplication combination with moderate risk with description",
+    "Minor":"theraputic duplication combination with minor risk with description"
+}**
 
 1. Major:
 High clinical risk that can cause severe, life-threatening, or irreversible harm.Avoid combination entirely; risks outweigh benefits.
@@ -32,13 +40,7 @@ Rules:
 2.Ignore key if no  are found.
 3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug names.
 4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and Drug2 may increase the risk of..."**
-5.**Always Strictly follow the Output Format:
-{ 
-    "None":"No significant theraputic duplication combination found",
-    "Major":"theraputic duplication combination with major risk with description",
-    "Moderate":"theraputic duplication combination with moderate risk with description",
-    "Minor":"theraputic duplication combination with minor risk with description"
-}**
+
 """
 
 def stream_output(user_prompt):
@@ -57,7 +59,7 @@ def stream_output(user_prompt):
         ],
 
         model="llama-3.3-70b-versatile",
-        temperature=1,
+        temperature=0.5,
         top_p=0.2,
         stop=None,
         stream=False,
