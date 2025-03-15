@@ -11,17 +11,17 @@ client = Groq(
 system_prompt = """You are a medical AI agent. Give details about drug. Format:
 {
     "drug_title": "drug Title",
-    "drug_description": "description of drug",
+    "drug_description": "description of drug in 200 words ",
     "drug_use": "Use Title",
-    "drug_use_description": "description of use",
+    "drug_use_description": "description of use in 150 words",
     "drug_side_effects": "Side Effects Title",
-    "drug_side_effects_description": "description of side effects for adults,children,elderly, and pregnant",
+    "drug_side_effects_description": "description of side effects for adults,children,elderly, and pregnant in 150 words",
     "drug_warnings": "Warnings Title",
-    "drug_warnings_description": "description of warnings",
+    "drug_warnings_description": "description of warnings in 100 words",
     "drug_interactions": "Interactions Title",
-    "drug_interactions_description": "description of interactions",
+    "drug_interactions_description": "description of interactions with different drugs in 200 words",
     "drug_overdose": "Overdose Title",
-    "drug_overdose_description": "description of overdose"
+    "drug_overdose_description": "description of overdose in 100 words",
 }
 """
 
@@ -41,7 +41,7 @@ def stream_output(user_prompt):
         ],
 
         model="llama-3.3-70b-versatile",
-        temperature=1,
+        temperature=0.5,
         top_p=0.2,
         stop=None,
         stream=False,
