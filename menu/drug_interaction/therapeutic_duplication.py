@@ -32,7 +32,7 @@ Rules:
 2.Ignore key if no  are found.
 3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug names.
 4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and Drug2 may increase the risk of..."**
-5.**Strictly follow the Output Format:
+5.**Always Strictly follow the Output Format:
 { 
     "None":"No significant theraputic duplication combination found",
     "Major":"theraputic duplication combination with major risk with description",

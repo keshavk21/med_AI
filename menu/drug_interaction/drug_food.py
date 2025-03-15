@@ -24,11 +24,13 @@ Rules:
 2.Ignore key if no interactions are found.
 3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug and food names.
 4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and food/herb/drink may increase the risk of..."**
+5.**Always Strictly follow the Output Format:
 5.**Strictly follow the Output Format:
-{
-    "Major":"interactions with major risk with description",
-    "Moderate":"interactions with moderate risk with description",
-    "Minor":"interactions with minor risk with description"
+{ 
+    "None":"No significant food/drink/herb combination found",
+    "Major":"food/drink/herb combination with major risk with description",
+    "Moderate":"food/drink/herb combination with moderate risk with description",
+    "Minor":"food/drink/herb combination with minor risk with description"
 }**
 """
 
