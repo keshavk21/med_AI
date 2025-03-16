@@ -8,19 +8,15 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent in mar.Classification Guidelines:
-
-**Always Strictly follow the Output Format:
-{ 
-    "None":"No significant theraputic duplication combination found",
-    "Major":"theraputic duplication combination with major risk with description",
-    "Moderate":"theraputic duplication combination with moderate risk with description",
-    "Minor":"theraputic duplication combination with minor risk with description"
-}**
-
+system_prompt = """You are an medical analyst capable of classifying the durg theraputic duplication pair in major,moderate and minor that responds in JSON. The JSON schema should include
+{
+"Major":"theraputic duplication with major risk in 200 words",
+"Moderate":"theraputic duplication with moderate risk in 200 words",
+"Minor":"theraputic duplication with minor risk in 200 words",
+}
 1. Major:
 High clinical risk that can cause severe, life-threatening, or irreversible harm.Avoid combination entirely; risks outweigh benefits.
-Examples include theraputic duplication with extreme toxicity, fatal arrhythmias, severe bleeding risk, or organ failure.
+
 
 2. Moderate:
 Noticeable clinical risk but not immediately life-threatening.
@@ -32,15 +28,11 @@ Minimal clinical risk with mild or insignificant effects.
 Generally safe to use together with minor precautions.
 Adjustments like dose timing or alternative selection may further reduce risk.
 
-4. None:
-No significant theraputic duplication found. Include very minor duplications
-
 Rules:
-1.Classify a theraputic duplication in one category at a time.
-2.Ignore key if no  are found.
+1.Classify a combination in one category at a time.
+2.Ignore key if no interactions are found.
 3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug names.
 4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and Drug2 may increase the risk of..."**
-
 """
 
 def stream_output(user_prompt):
@@ -62,6 +54,7 @@ def stream_output(user_prompt):
         temperature=0.5,
         top_p=0.2,
         stop=None,
+        response_format={"type": "json_object"},
         stream=False,
         )
         return chat_completion.choices[0].message.content

@@ -8,15 +8,12 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent.Classification Guidelines:
-
-**Always Strictly follow the Output Format:
+system_prompt = """You are an medical analyst capable of classifying the durg interactions pair in major,moderate and minor that responds in JSON. The JSON schema should include
 {
-    "Major":"interactions combination with major risk all togenther with description"
-    "Moderate":"interactions combination with moderate risk with description",
-    "Minor":"interactions combination with minor risk with description"
-}**
-
+"Major":"interactions combination with major risk in 200 words",
+"Moderate":"interactions combination with moderate risk in 200 words",
+"Minor":"interactions combination with minor risk in 200 words",
+}
 1. Major:
 High clinical risk that can cause severe, life-threatening, or irreversible harm.Avoid combination entirely; risks outweigh benefits.
 Examples include drugs with extreme toxicity, fatal arrhythmias, severe bleeding risk, or organ failure.
@@ -35,8 +32,8 @@ Rules:
 1.Classify a combination in one category at a time.
 2.Ignore key if no interactions are found.
 3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug names.
-4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and Drug2 may increase the risk of..."**  
-
+4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and Drug2 may increase the risk of..."**
+5.Remove empty key.
 """
 
 def stream_output(user_prompt):
@@ -57,6 +54,7 @@ def stream_output(user_prompt):
         model="llama-3.3-70b-versatile",
         temperature=0.5,
         top_p=0.2,
+        response_format={"type": "json_object"},
         stop=None,
         stream=False,
         )
