@@ -44,6 +44,7 @@ def stream_output(user_prompt):
         temperature=0.5,
         top_p=0.2,
         stop=None,
+        response_format={"type": "json_object"},
         stream=False,
         )
         return chat_completion.choices[0].message.content
