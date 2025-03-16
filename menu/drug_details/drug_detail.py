@@ -8,7 +8,7 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = """You are a medical AI agent. Give details about drug. Format:
+system_prompt = """You are a medical AI agent. Give details about drug with response JSON Format:
 {
     "drug_title": "drug Title",
     "drug_description": "description of drug in 200 words ",
