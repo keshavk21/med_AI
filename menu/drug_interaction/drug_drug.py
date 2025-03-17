@@ -10,9 +10,10 @@ client = Groq(
 
 system_prompt = """You are an medical analyst capable of classifying the durg interactions pair in major,moderate and minor that responds in JSON. The JSON schema should include
 {
-"Major":"interactions combination with major risk in 200 words",
-"Moderate":"interactions combination with moderate risk in 200 words",
-"Minor":"interactions combination with minor risk in 200 words",
+"Major":"drug interactions combination with major risk in 200 words",
+"Moderate":"drug interactions combination with moderate risk in 200 words",
+"Minor":"drug interactions combination with minor risk in 200 words",
+"No Interaction": "no drug interactions found"
 }
 1. Major:
 High clinical risk that can cause severe, life-threatening, or irreversible harm.Avoid combination entirely; risks outweigh benefits.

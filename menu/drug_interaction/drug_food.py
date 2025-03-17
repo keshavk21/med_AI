@@ -8,28 +8,19 @@ client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
 
-system_prompt = system_prompt = """You are an medical analyst capable of classifying the durg-(food,drink,herb) interactions pair in major,moderate and minor that responds in JSON. The JSON schema should include
+system_prompt = system_prompt = """You are an medical analyst capable of classifying the durg-food,drink,herb interactions pairs in major,moderate and minor that responds in JSON. The JSON schema should include
 {
-"Major":"interactions combination with major risk in 200 words",
-"Moderate":"interactions combination with moderate risk in 200 words",
-"Minor":"interactions combination with minor risk in 200 words",
+"Major":"drug-food/drink/herb interactions combination with major risk in 200 words",
+"Moderate":"food/drink/herb interactions combination with moderate risk in 200 words",
+"Minor":"food/drink/herb interactions combination with minor risk in 200 words",
+"No Interaction": "no food/drink/herb interactions found"
 }
-1.Major Interactions
- food-drug interactions significantly alter drug efficacy or safety, potentially leading to serious adverse effects or treatment failure.
 
-2. Moderate Interactions:
-   food-drug interactions may require dose adjustments or monitoring but are less severe than major interactions.
-   Examples:  Dairy products with tetracycline antibiotics (reduces antibiotic absorption), antacids with certain medications (may decrease drug absorption).
-
-3. Minor Interactions
-   food-drug interactions have minimal clinical significance and generally do not require intervention.
-   Examples: Caffeine with some medications (may slightly increase heart rate or blood pressure but is usually manageable).
-    
 Rules:
-1.Classify a combination in one category at a time.
-2.Ignore key if no interactions are found.
-3.Name the medications, avoid using pronouns like "it" or "they", instead use the drug and food names.
-4. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and food,herb,drink may increase the risk of..."**
+1.Ignore key if no interactions are found.
+2.Name the medications, avoid using pronouns like "it" or "they", instead use the drug and food names.
+3. Instead, use a full sentence without a colon, such as **"The combination of Drug1 and food,herb,drink may increase the risk of..."**
+4. Do **not** show durg-drug interactions and drug risk. 
 """
 
 def stream_output(user_prompt):

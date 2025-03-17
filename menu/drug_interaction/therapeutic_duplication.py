@@ -13,7 +13,9 @@ system_prompt = """You are an medical analyst capable of classifying the durg th
 "Major":"theraputic duplication with major risk in 200 words",
 "Moderate":"theraputic duplication with moderate risk in 200 words",
 "Minor":"theraputic duplication with minor risk in 200 words",
+"No Interaction":"No theraputic duplication between drugs"
 }
+
 1. Major:
 High clinical risk that can cause severe, life-threatening, or irreversible harm.Avoid combination entirely; risks outweigh benefits.
 
@@ -27,6 +29,9 @@ Risks can often be managed with precautionary measures like adjusting timing, us
 Minimal clinical risk with mild or insignificant effects.
 Generally safe to use together with minor precautions.
 Adjustments like dose timing or alternative selection may further reduce risk.
+
+4. None
+No theraputic duplication between drugs.
 
 Rules:
 1.Classify a combination in one category at a time.
