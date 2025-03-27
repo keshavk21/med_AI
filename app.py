@@ -10,6 +10,7 @@ from menu.drug_interaction.drug_drug import stream_output as drug_drug_check
 from menu.drug_interaction.drug_food import stream_output as drug_food_check
 from menu.drug_interaction.therapeutic_duplication import stream_output as therapeutic_check
 from menu.drug_details.drug_detail import stream_output as drug_detail_check
+from menu.symptoms_checker.symptom_check import stream_output as symptom_check
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +19,12 @@ app = FastAPI()
 # Define the input model
 class InputData(BaseModel):
     selected_meds: str
+    
+class SymptomCheckInput(BaseModel):
+    symptoms: list[str]
+    gender: str
+    age: int
+    country: str
 
 @app.post("/aggregate_interactions")
 async def aggregate_interactions(selected_meds: str = Form(...)):
@@ -70,6 +77,15 @@ async def drug_details(selected_meds: str = Form(...)):
     respose_dict = json.loads(response)
     # Return the raw response string without attempting to parse it as JSON
     return JSONResponse(content={"drug_details": respose_dict})
+
+@app.post("/symptom_check")
+async def symptom_check_endpoint(input_data: SymptomCheckInput):
+    """Endpoint to check symptoms."""
+    user_prompt = f"Symptoms: {input_data.symptoms}, Gender: {input_data.gender}, Age: {input_data.age}, Country: {input_data.country}"
+    response = symptom_check(user_prompt)
+    respose_dict = json.loads(response)
+    # Return the raw response string without attempting to parse it as JSON
+    return JSONResponse(content={"symptom_check": respose_dict})
 
 @app.get("/health")
 async def health_check():
