@@ -1,0 +1,376 @@
+/* =====================================================
+   Symptom Checker Page Styles
+   ===================================================== */
+
+.symptom-checker-page {
+    padding: var(--space-xl) 0;
+}
+
+.symptom-card {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Step Indicator */
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+    position: relative;
+}
+
+.step-indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 2px;
+    background: var(--bg-tertiary);
+    z-index: 0;
+}
+
+.step-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--glass-border);
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+    position: relative;
+    z-index: 1;
+    transition: all var(--transition-normal);
+}
+
+.step-dot--active {
+    background: var(--gradient-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.step-dot--current {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Step Content */
+.step-content {
+    min-height: 300px;
+}
+
+.step-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.step-header svg {
+    color: var(--accent-primary);
+    margin-bottom: var(--space-md);
+}
+
+.step-header h2 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-sm);
+}
+
+.step-header p {
+    color: var(--text-secondary);
+}
+
+/* Symptom Input */
+.symptom-input-group {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.symptom-input-group .input {
+    flex: 1;
+}
+
+/* Common Symptoms */
+.common-symptoms {
+    margin-bottom: var(--space-xl);
+}
+
+.common-symptoms__label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.common-symptoms__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.symptom-quick-add {
+    padding: var(--space-xs) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.symptom-quick-add:hover:not(:disabled) {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.symptom-quick-add--added {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--accent-success);
+    color: var(--accent-success);
+}
+
+/* Selected Symptoms */
+.selected-symptoms {
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--glass-border);
+}
+
+.selected-symptoms h4 {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.symptoms-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+/* Gender Options */
+.gender-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+.gender-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    background: var(--bg-tertiary);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    color: var(--text-secondary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.gender-option:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.gender-option--selected {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Age Input */
+.age-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.age-input {
+    text-align: center;
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+}
+
+.age-suffix {
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Country Grid */
+.country-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+}
+
+.country-option {
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.country-option:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.country-option--selected {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Results */
+.results-summary {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.results-summary__item {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+}
+
+.results-summary__item span {
+    color: var(--text-muted);
+    min-width: 80px;
+}
+
+.results-summary__item strong {
+    color: var(--text-primary);
+}
+
+/* Conditions List */
+.conditions-list {
+    margin-bottom: var(--space-xl);
+}
+
+.conditions-list h3 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-lg);
+}
+
+.condition-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-sm);
+    animation: slideUp 0.3s ease forwards;
+    opacity: 0;
+}
+
+.condition-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.condition-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Disclaimer */
+.disclaimer-box {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--accent-warning-light);
+    border: 1px solid var(--accent-warning);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.disclaimer-box svg {
+    flex-shrink: 0;
+    color: var(--accent-warning);
+}
+
+.disclaimer-box p {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.disclaimer-box strong {
+    color: var(--accent-warning);
+}
+
+/* Step Navigation */
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--glass-border);
+    margin-top: var(--space-xl);
+}
+
+/* Error Message */
+.symptom-card .error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--accent-danger-light);
+    border: 1px solid var(--accent-danger);
+    border-radius: var(--radius-lg);
+    color: var(--accent-danger);
+    margin-bottom: var(--space-xl);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .gender-options {
+        grid-template-columns: 1fr;
+    }
+
+    .country-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .symptom-input-group {
+        flex-direction: column;
+    }
+
+    .step-navigation {
+        flex-direction: column-reverse;
+    }
+
+    .step-navigation .btn {
+        width: 100%;
+    }
+}

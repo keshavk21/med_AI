@@ -1,0 +1,227 @@
+/* =====================================================
+   Drug Interaction Page Styles
+   ===================================================== */
+
+.drug-interaction-page {
+    padding: var(--space-xl) 0;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.page-header__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl);
+    color: white;
+    box-shadow: var(--shadow-glow);
+}
+
+.page-header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-xs);
+}
+
+.page-header p {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+}
+
+/* Input Section */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    position: relative;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: var(--space-lg);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-input-wrapper .input {
+    flex: 1;
+    padding-left: calc(var(--space-lg) + 28px);
+}
+
+.add-btn {
+    flex-shrink: 0;
+}
+
+/* Drug Chips */
+.drug-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--glass-border);
+}
+
+.helper-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Error Message */
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--accent-danger-light);
+    border: 1px solid var(--accent-danger);
+    border-radius: var(--radius-lg);
+    color: var(--accent-danger);
+    margin-top: var(--space-xl);
+}
+
+/* Results Section */
+.results-section {
+    margin-top: var(--space-2xl);
+}
+
+.results-title {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+/* Interaction Section */
+.interaction-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-lg);
+    overflow: hidden;
+}
+
+.interaction-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.interaction-section__header:hover {
+    background: var(--bg-tertiary);
+}
+
+.interaction-section__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.interaction-section__title h3 {
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+}
+
+.interaction-section__title svg {
+    color: var(--accent-primary);
+}
+
+.interaction-section__count {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+}
+
+.interaction-section__content {
+    padding: 0 var(--space-lg) var(--space-lg);
+}
+
+/* Interaction Item */
+.interaction-item {
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-md);
+}
+
+.interaction-item:last-child {
+    margin-bottom: 0;
+}
+
+.interaction-item .badge {
+    margin-bottom: var(--space-sm);
+}
+
+.interaction-item p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: 1.7;
+}
+
+/* No Interaction */
+.no-interaction {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--accent-success-light);
+    border-radius: var(--radius-lg);
+    color: var(--accent-success);
+}
+
+.no-interaction svg {
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .search-input-wrapper {
+        flex-direction: column;
+    }
+
+    .search-input-wrapper .input {
+        padding-left: var(--space-lg);
+    }
+
+    .search-input-wrapper .search-icon {
+        display: none;
+    }
+
+    .add-btn {
+        width: 100%;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}
